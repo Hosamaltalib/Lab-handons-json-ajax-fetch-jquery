@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AJAX Lab - Exercise 2</title>
+</head>
+<body>
+    <h1>Classic AJAX (XMLHttpRequest)</h1>
+    <button id="loadBtn">Load User 1</button>
+    <div id="result" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc;"></div>
+
+    <script>
+        document.getElementById('loadBtn').addEventListener('click', function() {
+            const xhr = new XMLHttpRequest(); [cite: 137]
+            xhr.open("GET", "https://jsonplaceholder.typicode.com/users/1", true); [cite: 142]
+            
+            xhr.onload = function() { [cite: 144]
+                if (xhr.status === 200) { [cite: 145]
+                    const data = JSON.parse(xhr.responseText); [cite: 147]
+                    document.getElementById('result').innerHTML = `
+                        <h3>${data.name}</h3>
+                        <p>Email: ${data.email}</p>
+                    `;
+                }
+            };
+            xhr.send(); [cite: 157]
+        });
+    </script>
+</body>
+</html>
