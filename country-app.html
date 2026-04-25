@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Country Info App</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif; background: #EBF3FB;
+            min-height: 100vh; display: flex; flex-direction: column; 
+            align-items: center; padding: 40px 20px;
+        }
+        h1 { color: #1F4E79; font-size: 2rem; }
+        .search { display: flex; gap: 10px; width: 100%; max-width: 500px; margin-bottom: 24px; }
+        input { flex: 1; padding: 12px 16px; font-size: 16px; border: 2px solid #B0C9E0; border-radius: 8px; }
+        button { 
+            padding: 12px 24px; background: #2E75B6; color: white;
+            border: none; border-radius: 8px; font-size: 16px; cursor: pointer; 
+        }
+        button:hover { background: #1F4E79; }
+        #card {
+            background: white; border-radius: 12px; padding: 28px; width: 100%;
+            max-width: 500px; box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            display: none;
+        }
+        #card img { width: 120px; border: 2px solid #ddd; border-radius: 4px; }
+        #card h2 { color: #1F4E79; margin: 12px 0; }
+        .info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 15px; }
+        .info-row span:first-child { color: #888; }
+        .info-row span:last-child { font-weight: bold; color: #333; }
+        #error { color: #c0392b; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1>Country Info App</h1>
+    <div class="search">
+        <input type="text" id="countryInput" placeholder="Enter country name...">
+        <button id="searchBtn">Search</button>
+    </div>
+    <p id="error"></p>
+
+    <div id="card">
+        <img id="flag" src="" alt="Flag">
+        <h2 id="countryName"></h2>
+        <div id="info"></div>
+    </div>
+
+    <script>
+        async function searchCountry(name) {
+            $("#error").text("");
+            $("#card").hide();
+
+            try {
+                const url = `https://restcountries.com/v3.1/name/${encodeURIComponent(name)}?fullText=true`;
+                const response = await fetch(url);
+
+                if (!response.ok) throw new Error("Country not found. Try: Malaysia, Japan, Brazil");
+
+                const data = await response.json();
+                const country = data[0];
+
+                const capital = country.capital ? country.capital[0] : "N/A";
+                const population = country.population.toLocaleString();
+                const region = country.region;
+                const currency = country.currencies ? Object.values(country.currencies)[0].name : "N/A";
+                const languages = country.languages ? Object.values(country.languages).join(", ") : "N/A";
+
+                $("#flag").attr("src", country.flags.png);
+                $("#countryName").text(country.name.common);
+
+                const rows = [
+                    ["Capital", capital],
+                    ["Population", population],
+                    ["Region", region],
+                    ["Currency", currency],
+                    ["Languages", languages]
+                ];
+
+                $("#info").empty();
+                rows.forEach(([label, value]) => {
+                    $("#info").append(`
+                        <div class="info-row">
+                            <span>${label}</span>
+                            <span>${value}</span>
+                        </div>
+                    `);
+                });
+
+                $("#card").fadeIn(400);
+
+            } catch (err) {
+                $("#error").text("❌ " + err.message);
+            }
+        }
+
+        $("#searchBtn").click(function() {
+            const name = $("#countryInput").val().trim();
+            if (name) searchCountry(name);
+        });
+
+        $("#countryInput").keypress(function(e) {
+            if (e.which === 13) $("#searchBtn").click();
+        });
+    </script>
+</body>
+</html>
