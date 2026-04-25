@@ -1,0 +1,10 @@
+{
+  "name": "Hosam Altalib",
+  "age": 22,
+  "hobbies": ["Programming", "Motorcycling", "Reading"],
+  "subjects": ["Math", "Physics", "Programming"],
+  "address": {
+    "city": "Johor Bahru",
+    "country": "Malaysia"
+  }
+}
